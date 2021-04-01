@@ -8,9 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var isLaunchPageShown = true
+    @State var showPermissionPopup = false
+    @State var showSignUpPage = false
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        if isLaunchPageShown {
+            LaunchPage(isLaunchPageShown: $isLaunchPageShown).animation(.interactiveSpring())
+        } else {
+            SignUporLogInPage(showPermissionPopup: $showPermissionPopup, showSignUpPage: $showSignUpPage)
+        }
     }
 }
 
