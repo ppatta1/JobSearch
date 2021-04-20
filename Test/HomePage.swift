@@ -8,23 +8,27 @@
 import SwiftUI
 
 struct HomePage: View {
+    @State var isEditAllowed = true
+    @Binding var userInfo: FetchedResults<UserInfo>.Element
+    
+    let persistenceContainer = PersistenceController.shared
     var body: some View {
-        JobsListView()
-//        TabView {
-//            JobsListView()
-//                .tabItem {
-//                    Label("Home", systemImage: "house")
-//                }
-//
+        TabView {
+            JobsListView(user: $userInfo)
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+
 //            SavedJobsPage()
 //                .tabItem {
 //                    Label("Saved", systemImage: "heart")
 //                }
-//            ProfilePage()
-//                .tabItem {
-//                    Label("Profile", systemImage: "person")
-//                }
-//        }
+            
+            SignUpPage(shouldAllowEdit: $isEditAllowed, userInfo: $userInfo).environment(\.managedObjectContext, persistenceContainer.container.viewContext)
+                .tabItem {
+                    Label("Profile", systemImage: "person")
+                }
+        }
         .navigationBarBackButtonHidden(true)
         .navigationBarTitle("JobSearch")
         .navigationBarTitleDisplayMode(.inline)
@@ -32,8 +36,3 @@ struct HomePage: View {
     }
 }
 
-struct HomePage_Previews: PreviewProvider {
-    static var previews: some View {
-        HomePage()
-    }
-}

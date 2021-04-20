@@ -6,11 +6,16 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct JobCardView: View {
     let jobDetails: JobCardModel
-    
+    @State var isDetailedViewActive = false
+    @Binding var user: FetchedResults<UserInfo>.Element
     var body: some View {
+        NavigationLink(destination: JobDetailedView(jobDetails: jobDetails, user: $user), isActive: $isDetailedViewActive) {
+            EmptyView()
+        }
         VStack(alignment: .leading) {
             HStack {
                 VStack(alignment: .leading) {
@@ -51,6 +56,20 @@ struct JobCardView: View {
                 }
                 Spacer()
                 HStack {
+                    if let lat = jobDetails.latitude, let long = jobDetails.longitude, let userLat = user.latitude, let userLong = user.longitude, userLat != 0, userLong != 0 {
+                        let coordinate1 = CLLocation(latitude: userLat, longitude: userLong)
+                        let coordinate2 = CLLocation(latitude: lat, longitude: long)
+                        let distance = coordinate1.distance(from: coordinate2) / 1609
+                        let distStr = String(format: "%0.1f", distance)
+                        Image(systemName: "location")
+                            .font(.subheadline)
+                        Text("\(distStr) miles away")
+                            .font(.subheadline)
+                    }
+                }
+                
+                Spacer()
+                HStack {
                     Image(systemName: "bag")
                         .font(.subheadline)
                     switch jobDetails.fullTimeOrPartTime {
@@ -76,16 +95,12 @@ struct JobCardView: View {
             )
             .fill(jobDetails.backgroundColor)
         )
-        .padding(.vertical, 10)
-        .padding(.horizontal, 5)
+        .padding(.vertical, 15)
+        .padding(.horizontal, 10)
         .shadow(color: jobDetails.backgroundColor, radius: 5, x: 1, y: 1)
+        .onTapGesture {
+            isDetailedViewActive = true
+        }
         Spacer()
-    }
-}
-
-struct JobCardView_Previews: PreviewProvider {
-    static var jobDetails = JobCardModel.data[0]
-    static var previews: some View {
-        JobCardView(jobDetails: jobDetails)
     }
 }

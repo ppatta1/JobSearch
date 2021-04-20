@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct JobsListView: View {
+    
+//    @State private var location: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(), span: MKCoordinateSpan())
+    @Binding var user: FetchedResults<UserInfo>.Element
+    
     var jobs: [JobCardModel] {
         var searchedJobs: [JobCardModel] = []
         if searchText == "" {
@@ -47,6 +52,7 @@ struct JobsListView: View {
     }
     
     func cancel() {
+        
     }
     
     var body: some View {
@@ -93,7 +99,7 @@ struct JobsListView: View {
                     .padding()
                     .navigationBarHidden(showCancelButton)
                     ForEach(0..<jobs.count, id: \.self) { index in
-                        JobCardView(jobDetails: jobs[index])
+                        JobCardView(jobDetails: jobs[index], user: $user)
                             .stacked(at: index, in: jobs.count).frame(maxHeight: .infinity)
                     }
                     .resignKeyboardOnDragGesture()

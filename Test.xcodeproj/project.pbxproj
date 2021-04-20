@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		074443B7262CE52D00D1B82F /* Persistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074443B6262CE52D00D1B82F /* Persistance.swift */; };
+		074443BC262CEDE100D1B82F /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074443BB262CEDE100D1B82F /* UserModel.swift */; };
+		074443E0262CFE3000D1B82F /* Test.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 074443DE262CFE3000D1B82F /* Test.xcdatamodeld */; };
+		074443E5262D675100D1B82F /* LoginPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074443E4262D675100D1B82F /* LoginPage.swift */; };
+		074443EA262EEA7800D1B82F /* JobDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074443E9262EEA7700D1B82F /* JobDetailedView.swift */; };
 		07511F792613D46D0062BCA6 /* JobsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07511F782613D46D0062BCA6 /* JobsListView.swift */; };
 		07511FA6261459BD0062BCA6 /* FilterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07511FA5261459BD0062BCA6 /* FilterList.swift */; };
 		07511FAB261459DD0062BCA6 /* FilterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07511FAA261459DD0062BCA6 /* FilterListView.swift */; };
@@ -44,6 +49,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		074443B6262CE52D00D1B82F /* Persistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistance.swift; sourceTree = "<group>"; };
+		074443BB262CEDE100D1B82F /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		074443DF262CFE3000D1B82F /* Test.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Test.xcdatamodel; sourceTree = "<group>"; };
+		074443E4262D675100D1B82F /* LoginPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPage.swift; sourceTree = "<group>"; };
+		074443E9262EEA7700D1B82F /* JobDetailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetailedView.swift; sourceTree = "<group>"; };
 		07511F782613D46D0062BCA6 /* JobsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsListView.swift; sourceTree = "<group>"; };
 		07511FA5261459BD0062BCA6 /* FilterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterList.swift; sourceTree = "<group>"; };
 		07511FAA261459DD0062BCA6 /* FilterListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListView.swift; sourceTree = "<group>"; };
@@ -133,6 +143,11 @@
 				07511FAA261459DD0062BCA6 /* FilterListView.swift */,
 				07511FAF26145F6D0062BCA6 /* FilterObject.swift */,
 				07511FB42614FEFA0062BCA6 /* ProfilePage.swift */,
+				074443B6262CE52D00D1B82F /* Persistance.swift */,
+				074443BB262CEDE100D1B82F /* UserModel.swift */,
+				074443DE262CFE3000D1B82F /* Test.xcdatamodeld */,
+				074443E4262D675100D1B82F /* LoginPage.swift */,
+				074443E9262EEA7700D1B82F /* JobDetailedView.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -299,12 +314,17 @@
 				07BF62A02610A70A0058F109 /* HomePage.swift in Sources */,
 				07BF6285261068F30058F109 /* SignUpPage.swift in Sources */,
 				07511FAB261459DD0062BCA6 /* FilterListView.swift in Sources */,
+				074443B7262CE52D00D1B82F /* Persistance.swift in Sources */,
 				07511FB026145F6D0062BCA6 /* FilterObject.swift in Sources */,
+				074443E0262CFE3000D1B82F /* Test.xcdatamodeld in Sources */,
 				07BF6246260B35C10058F109 /* ContentView.swift in Sources */,
 				07BF62AA2612D3C50058F109 /* JobCardView.swift in Sources */,
 				07BF6244260B35C10058F109 /* TestApp.swift in Sources */,
 				07BF62A52612A7780058F109 /* JobCardModel.swift in Sources */,
+				074443EA262EEA7800D1B82F /* JobDetailedView.swift in Sources */,
+				074443BC262CEDE100D1B82F /* UserModel.swift in Sources */,
 				07BF628F2610704D0058F109 /* SignUporLogInPage.swift in Sources */,
+				074443E5262D675100D1B82F /* LoginPage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -618,6 +638,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		074443DE262CFE3000D1B82F /* Test.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				074443DF262CFE3000D1B82F /* Test.xcdatamodel */,
+			);
+			currentVersion = 074443DF262CFE3000D1B82F /* Test.xcdatamodel */;
+			path = Test.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 07BF6238260B35C10058F109 /* Project object */;
 }
