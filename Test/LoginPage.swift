@@ -15,6 +15,7 @@ struct LoginPage: View {
     @State private var isLinkActive = false
     @State private var showInvalidDetailsView = false
     @State var userInfo: FetchedResults<UserInfo>.Element
+    @Environment(\.colorScheme) var colorScheme
     
     @FetchRequest (entity: UserInfo.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \UserInfo.email, ascending: true)]) var users: FetchedResults<UserInfo>
     
@@ -37,7 +38,7 @@ struct LoginPage: View {
                                 .fontWeight(.semibold)
                             Spacer()
                         }
-                        .foregroundColor(Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
+                        .foregroundColor(.accentColor)
                     }.onTapGesture {
                         for user in users {
                             if user.email == self.email && user.password == self.password {
@@ -52,6 +53,6 @@ struct LoginPage: View {
                     }
                 }
             }
-        }.navigationBarTitle(Text("Log in")).accentColor(Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
+        }.navigationBarTitle(Text("Log in")).accentColor(colorScheme == .dark ? .blue : Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
     }
 }

@@ -17,7 +17,7 @@ struct SignUpPage: View {
     @State private var dob = Date()
     @State private var contactNumber = ""
     @State private var noOfSkills = 0
-    @State private var skills: [Int] = []
+    @State private var skills: [String] = []
     @State private var skillsRatings: [Double] = []
     @State private var skill1 = ""
     @State private var skill1Rating: Double = 0
@@ -34,14 +34,19 @@ struct SignUpPage: View {
     @State private var userPlace: String = "Set location"
     @State private var showsUpdateToast = false
     @State private var currentLocation: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(), span: MKCoordinateSpan())
-    
+    @State private var showsImagePicker = false
+    @State private var showsProfileImageActionSheet = false
+    @State private var profileImage:UIImage?
+    @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
     private let loc = LocationModel()
     
     @Binding var shouldAllowEdit: Bool
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.colorScheme) var colorScheme
     @Binding var user: FetchedResults<UserInfo>.Element
     
     @FetchRequest (entity: UserInfo.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \UserInfo.email, ascending: true)]) var users: FetchedResults<UserInfo>
+    
     let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
             formatter.dateStyle = .long
@@ -57,24 +62,29 @@ struct SignUpPage: View {
     init(shouldAllowEdit: Binding<Bool>, userInfo: Binding<FetchedResults<UserInfo>.Element>) {
         self._shouldAllowEdit = shouldAllowEdit
         self._user = userInfo
-        if self.shouldAllowEdit {
-            self._firstname = State(wrappedValue: self.user.first_name ?? "")
-            self._lastname =  State(wrappedValue: self.user.last_name ?? "")
-            self._email =  State(wrappedValue: self.user.email ?? "")
-            self._password =  State(wrappedValue: self.user.password ?? "")
-            self._gender = State(wrappedValue: Int(self.user.gender))
-            self._dob = State(wrappedValue: self.user.dob ?? Date())
-            self._contactNumber = State(wrappedValue: self.user.contact ?? "")
-            self._noOfSkills = State(wrappedValue: Int(self.user.number_of_skills))
-            self._skills = State(wrappedValue: (self.user.skills as? [Int]) ?? [])
-            self._skillsRatings = State(wrappedValue: (self.user.skill_ratings as? [Double]) ?? [])
-            self._typeOfJob = State(wrappedValue: JobCardModel.TypeOfJob(rawValue: Int(self.user.job_preference))!)
-        }
     }
     
     var body: some View {
-        Form {
-            Section(header: Text("Account Information")) {
+        ScrollView {
+            ZStack(alignment: .bottomTrailing) {
+                Image(uiImage: profileImage ?? UIImage(named: "UserDefaultImage")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipShape(Circle())
+                    .frame(width: 100, height: 100, alignment: .center)
+                    .padding()
+                Image(systemName: "plus")
+                    .foregroundColor(.white)
+                    .frame(width: 25, height: 25)
+                    .background(Color.blue)
+                    .clipShape(Circle())
+                    .padding()
+                    .onTapGesture {
+                        self.showsProfileImageActionSheet = true
+                    }
+            }
+        VStack(alignment: .leading, spacing: 15) {
+            Section(header: Text("Account Information").fontWeight(.bold)) {
                 TextField("Firstname", text: $firstname)
                     .disabled(shouldAllowEdit)
                 TextField("Lastname", text: $lastname)
@@ -85,7 +95,7 @@ struct SignUpPage: View {
                     SecureField("Password", text: $password)
                 }
             }
-            Section(header: Text("Personal Information")) {
+            Section(header: Text("Personal Information").fontWeight(.bold)) {
                 HStack {
                     Picker(selection: $gender, label: Text("Gender")) {
                         Text("Female").tag(0)
@@ -110,17 +120,11 @@ struct SignUpPage: View {
                     .keyboardType(.numberPad)
             }
             
-            Section(header: Text("Technical Skills")) {
+            Section(header: Text("Technical Skills").fontWeight(.bold)) {
                 VStack {
                     ForEach(Array(skills.enumerated()), id: \.0) { i, _ in
                         HStack {
-                            Picker("Skill", selection: $skills[i]) {
-                                ForEach(0..<skillsOptions.count){
-                                    Text(self.skillsOptions[$0]).tag($0)
-                                }
-                            }.pickerStyle(MenuPickerStyle())
-                            Spacer()
-                            Text(skillsOptions[skills[i]])
+                            TextField("Skill \(i)", text: $skills[i])
                             Spacer()
                             Slider(value: $skillsRatings[i], in: 0...5, step: 1)
                             Text("\(Int(skillsRatings[i]))")
@@ -128,7 +132,7 @@ struct SignUpPage: View {
                     }
                     Stepper(onIncrement: {
                         if(self.noOfSkills < 10){
-                            self.skills.append(0)
+                            self.skills.append("")
                             self.skillsRatings.append(0)
                             self.noOfSkills += 1
                         }
@@ -143,7 +147,7 @@ struct SignUpPage: View {
                     }
             }
             
-            Section(header: Text("Job Preferences")) {
+            Section(header: Text("Job Preferences").fontWeight(.bold)) {
                 VStack {
                     HStack {
                         ZStack {
@@ -208,7 +212,7 @@ struct SignUpPage: View {
 //                        Text(" ")
 //                        Text("\(longitude)")
 //                        Text("")
-                        Text(userPlace).foregroundColor(Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
+                        Text(userPlace).foregroundColor(.accentColor)
                     }
                 }.onTapGesture {
 //                    loc.requestAuthorisation(always: false)
@@ -241,24 +245,6 @@ struct SignUpPage: View {
                     Section {
                         NavigationLink(destination: HomePage(userInfo: $user), isActive: $isSignUpButtonActive) {
                             Button(action: {
-                            }) {
-                                HStack {
-                                    HStack {
-                                        Spacer()
-                                        Text("Proceed to SignUp")
-                                            .fontWeight(.semibold)
-                                        Spacer()
-                                    }
-                                }
-                                .foregroundColor(Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
-                            }.onTapGesture {
-//                                DispatchQueue.main.asyncAfter(deadline: .now()) {
-//                                    if let userL = self.loc.location {
-//                                        currentLocation = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userL.coordinate.latitude, longitude: userL.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-//                                    }
-//                                    latitude = currentLocation.center.latitude
-//                                    longitude = currentLocation.center.longitude
-//                                }
                                 var alreadyExists = false
                                 for user in users {
                                     if email == user.email {
@@ -272,6 +258,24 @@ struct SignUpPage: View {
                                 } else {
                                     self.showUserAlreadyExistsView = true
                                 }
+                            }) {
+                                HStack {
+                                    HStack {
+                                        Spacer()
+                                        Text("Proceed to SignUp")
+                                            .fontWeight(.semibold)
+                                        Spacer()
+                                    }
+                                }
+                                .foregroundColor(.accentColor)
+                            }.onTapGesture {
+//                                DispatchQueue.main.asyncAfter(deadline: .now()) {
+//                                    if let userL = self.loc.location {
+//                                        currentLocation = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userL.coordinate.latitude, longitude: userL.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+//                                    }
+//                                    latitude = currentLocation.center.latitude
+//                                    longitude = currentLocation.center.longitude
+//                                }
                             }
                         }
                     }
@@ -279,6 +283,9 @@ struct SignUpPage: View {
                 } else {
                     Section {
                         Button(action: {
+                            datePickerShown = false
+                            showsUpdateToast = true
+                            updateUserDetails()
                         }) {
                             HStack {
                                 HStack {
@@ -288,11 +295,7 @@ struct SignUpPage: View {
                                     Spacer()
                                 }
                             }
-                            .foregroundColor(Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
-                        }.onTapGesture {
-                            datePickerShown = false
-                            showsUpdateToast = true
-                            updateUserDetails()
+                            .foregroundColor(.accentColor)
                         }
                         Button(action: {
                         }) {
@@ -304,20 +307,54 @@ struct SignUpPage: View {
                                     Spacer()
                                 }
                             }
-                            .foregroundColor(Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
+                            .foregroundColor(.accentColor)
                         }.onTapGesture {
                             
                         }
                     }
                 }
             }
-        }.navigationBarTitle(Text("Sign Up")).accentColor(Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
+        }
+        .navigationBarTitle(Text("Sign Up")).accentColor(colorScheme == .dark ? .blue : Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
         .onAppear {
             if !shouldAllowEdit {
                 loc.requestAuthorisation(always: false)
             }
         }.alert(isPresented: $showsUpdateToast) { () -> Alert in
             Alert(title: Text("Updated successfully"))
+        }.padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
+        }
+        .sheet(isPresented: $showsImagePicker) {
+            ImagePicker(sourceType: self.sourceType, image: $profileImage, isPresented: $showsImagePicker)
+        }
+        .actionSheet(isPresented: $showsProfileImageActionSheet) { () -> ActionSheet in
+            ActionSheet(title: Text("Choose mode"), message: Text("Please choose your preferred mode to set your profile image"), buttons: [ActionSheet.Button.default(Text("Take Photo"), action: {
+                self.showsImagePicker = true
+                self.sourceType = .camera
+            }), ActionSheet.Button.default(Text("choose Photo"), action: {
+                self.showsImagePicker = true
+                self.sourceType = .photoLibrary
+            }), ActionSheet.Button.cancel()])
+        }
+        .onAppear {
+            if self.shouldAllowEdit {
+                self.firstname = self.user.first_name ?? ""
+                self.lastname =  self.user.last_name ?? ""
+                self.email =  self.user.email ?? ""
+                self.password =  self.user.password ?? ""
+                self.gender = Int(self.user.gender)
+                self.dob = self.user.dob ?? Date()
+                self.contactNumber = self.user.contact ?? ""
+                self.noOfSkills = Int(self.user.number_of_skills)
+                self.skills = self.user.skills as? [String] ?? []
+                self.skillsRatings = self.user.skill_ratings as? [Double] ?? []
+                self.typeOfJob = JobCardModel.TypeOfJob(rawValue: Int(self.user.job_preference))!
+                if let imgData = self.user.profile_image {
+                    self.profileImage = UIImage(data: imgData) ?? UIImage(named: "UserDefaultImage")!
+                }
+                self.latitude = self.user.latitude
+                self.longitude = self.user.longitude
+            }
         }
     }
     
@@ -337,6 +374,7 @@ struct SignUpPage: View {
         userInfo.latitude = latitude
         userInfo.longitude = longitude
         userInfo.user_place = userPlace
+        userInfo.profile_image = profileImage?.jpegData(compressionQuality: 1.0)
         user = userInfo
         saveContext()
     }
@@ -353,6 +391,7 @@ struct SignUpPage: View {
         user.skills = skills as NSObject
         user.skill_ratings = skillsRatings as NSObject
         user.job_preference = Int16(typeOfJob.rawValue)
+        user.profile_image = profileImage?.jpegData(compressionQuality: 1.0)
         saveContext()
     }
     

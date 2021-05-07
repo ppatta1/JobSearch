@@ -11,6 +11,10 @@ import MapKit
 struct JobDetailedView: View {
     let jobDetails: JobCardModel
     @Binding var user: FetchedResults<UserInfo>.Element
+    @State private var jobLocation: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 33.4242, longitude: -111.9281), span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))
+    @State private var pinLocation: Location = Location(name: "Test location", coordinate: CLLocationCoordinate2D(latitude: 33.4242, longitude: -111.9281))
+    @State private var shouldShowMapView: Bool = false
+    
     var body: some View {
         ScrollView {
         VStack(alignment: .leading, spacing: 10) {
@@ -72,9 +76,26 @@ struct JobDetailedView: View {
             if let desc = jobDetails.jobDetailedDescription {
                 Text(desc)
             }
+            if shouldShowMapView {
+                Map(coordinateRegion: $jobLocation, interactionModes: .all, showsUserLocation: true, userTrackingMode: .constant(.follow), annotationItems: [pinLocation]) {
+                    MapPin(coordinate: $0.coordinate, tint: .blue)
+                }
+                    .frame(width: 400, height: 200)
+            }
         }.padding()
         .frame(maxHeight: .infinity, alignment: .top)
+        }.onAppear {
+            if let latitude = jobDetails.latitude, let longitude = jobDetails.longitude {
+                shouldShowMapView = true
+                jobLocation = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))
+                pinLocation = Location(name: jobDetails.companyName, coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
+            }
         }
     }
 }
 
+struct Location: Identifiable {
+    let id = UUID()
+    let name: String
+    let coordinate: CLLocationCoordinate2D
+}

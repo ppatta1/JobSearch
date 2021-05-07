@@ -10,6 +10,7 @@ import SwiftUI
 struct HomePage: View {
     @State var isEditAllowed = true
     @Binding var userInfo: FetchedResults<UserInfo>.Element
+    @Environment(\.colorScheme) var colorScheme
     
     let persistenceContainer = PersistenceController.shared
     var body: some View {
@@ -32,7 +33,7 @@ struct HomePage: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarTitle("JobSearch")
         .navigationBarTitleDisplayMode(.inline)
-        .accentColor(Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
+        .accentColor(colorScheme == .dark ? .blue : Color(red: 31/255, green: 39/255, blue: 123/255, opacity: 0.9))
     }
 }
 

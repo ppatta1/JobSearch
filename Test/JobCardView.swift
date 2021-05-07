@@ -7,11 +7,14 @@
 
 import SwiftUI
 import MapKit
+import UIKit
 
 struct JobCardView: View {
     let jobDetails: JobCardModel
     @State var isDetailedViewActive = false
     @Binding var user: FetchedResults<UserInfo>.Element
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.accessibilityInvertColors) var invertColor
     var body: some View {
         NavigationLink(destination: JobDetailedView(jobDetails: jobDetails, user: $user), isActive: $isDetailedViewActive) {
             EmptyView()
@@ -93,14 +96,31 @@ struct JobCardView: View {
                 cornerRadius: 10,
                 style: .continuous
             )
-            .fill(jobDetails.backgroundColor)
+            .fill(colorScheme == .dark ? .gray : jobDetails.backgroundColor)
         )
         .padding(.vertical, 15)
         .padding(.horizontal, 10)
-        .shadow(color: jobDetails.backgroundColor, radius: 5, x: 1, y: 1)
+//        .shadow(color: colorScheme == .dark ? Color(red: 1 - jobDetails.backgroundColor.components.red, green: 1 - jobDetails.backgroundColor.components.green, blue: 1 - jobDetails.backgroundColor.components.blue) : jobDetails.backgroundColor, radius: 5, x: 1, y: 1)
         .onTapGesture {
             isDetailedViewActive = true
         }
         Spacer()
+    }
+}
+extension Color {
+    var components: (red: CGFloat, green: CGFloat, blue: CGFloat, opacity: CGFloat) {
+        
+        typealias NativeColor = UIColor
+
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var o: CGFloat = 0
+
+        guard NativeColor(self).getRed(&r, green: &g, blue: &b, alpha: &o) else {
+            return (0, 0, 0, 0)
+        }
+
+        return (r, g, b, o)
     }
 }
